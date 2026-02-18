@@ -1,0 +1,19 @@
+apiVersion: apps/v1       # Deployments live in the "apps" API group
+kind: Deployment
+metadata:
+  name: nginx-deployment   # Name of the Deployment itself
+spec:
+  replicas: 3              # How many Pods to keep running at all times
+  selector:
+    matchLabels:
+      app: nginx           # This Deployment manages Pods with label app=nginx
+  template:                # This is the blueprint for each Pod it creates
+    metadata:
+      labels:
+        app: nginx         # Each Pod gets this label (must match selector above!)
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
