@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service      # The stable name for this service
+spec:
+  selector:
+    app: nginx             # Route traffic to any pod with label app=nginx
+  ports:
+  - port: 80               # The port the Service listens on (inside cluster)
+    targetPort: 80         # The port on the Pod to forward to
+  type: ClusterIP          # Only reachable inside the cluster
