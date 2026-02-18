@@ -1,19 +1,34 @@
-apiVersion: apps/v1       # Deployments live in the "apps" API group
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment   # Name of the Deployment itself
+  name: nginx-deployment
 spec:
-  replicas: 3              # How many Pods to keep running at all times
+  replicas: 2
   selector:
     matchLabels:
-      app: nginx           # This Deployment manages Pods with label app=nginx
-  template:                # This is the blueprint for each Pod it creates
+      app: nginx
+  template:
     metadata:
       labels:
-        app: nginx         # Each Pod gets this label (must match selector above!)
+        app: nginx
     spec:
       containers:
       - name: nginx
         image: nginx:alpine
         ports:
         - containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /          # Hit this URL on the container
+            port: 80         # On this port
+          initialDelaySeconds: 5   # Wait 5 seconds before first check
+                                   # (gives container time to start up)
+          periodSeconds: 10        # Check every 10 seconds
+          failureThreshold: 3      # Restart after 3 consecutive failures
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 3   # Slightly faster - check readiness sooner
+          periodSeconds: 5         # Check every 5 seconds
+          failureThreshold: 2      # Stop traffic after 2 failures
